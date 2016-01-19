@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <fcntl.h>
 #include <jni.h>  /* /usr/lib/jvm/java-1.7.0-openjdk-amd64/include/ */
 
 #include <android/log.h> /*liblog*/
@@ -8,26 +9,30 @@
 
 #if 0
 typedef struct {
-    char *name;          /* JavaÀïµ÷ÓÃµÄº¯ÊýÃû */
-    char *signature;    /* JNI×Ö¶ÎÃèÊö·û, ÓÃÀ´±íÊ¾JavaÀïµ÷ÓÃµÄº¯ÊýµÄ²ÎÊýºÍ·µ»ØÖµÀàÐÍ */
-    void *fnPtr;          /* CÓïÑÔÊµÏÖµÄ±¾µØº¯Êý */
+    char *name;          /* Javaï¿½ï¿½ï¿½ï¿½ÃµÄºï¿½ï¿½ï¿½ï¿½ï¿½ */
+    char *signature;    /* JNIï¿½Ö¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾Javaï¿½ï¿½ï¿½ï¿½ÃµÄºï¿½ï¿½ï¿½Ä²ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ */
+    void *fnPtr;          /* Cï¿½ï¿½ï¿½ï¿½Êµï¿½ÖµÄ±ï¿½ï¿½Øºï¿½ï¿½ï¿½ */
 } JNINativeMethod;
 #endif
 
-
+jint fd = -1;
 
 jint led_open(JNIEnv *env, jobject cls)
 {
-
-	__android_log_print(ANDROID_LOG_DEBUG,"LED","native add led_open");
+	fd = open("/dev/firefly-led",O_RDWR);
+	if (fd < 0)
+	{
+		__android_log_print(ANDROID_LOG_DEBUG,"LED","native add led_open fail,fd = %d",fd);
+		return -1;
+	} else
+		__android_log_print(ANDROID_LOG_DEBUG,"LED","native add led_open,fd = %d",fd);
 
 	return 0;
 }
 
-
 void led_close(JNIEnv *env, jobject cls)
 {
-
+	close(fd);
 	__android_log_print(ANDROID_LOG_DEBUG,"LED","native add led_close");
 	
 }
@@ -35,9 +40,11 @@ void led_close(JNIEnv *env, jobject cls)
 
 jint led_ctrl(JNIEnv *env, jobject cls,jint which,jint status)
 {
+	jint ret = -1;
+	ret = ioctl(fd,status,which);
 
-	__android_log_print(ANDROID_LOG_DEBUG,"LED","native add led_ctrl: which = %d,status = %d",which,status);
-	return 0;
+	__android_log_print(ANDROID_LOG_DEBUG,"LED","native add led_ctrl: which = %d,status = %d,ret = %d",which,status,ret);
+	return ret;
 }
 
 

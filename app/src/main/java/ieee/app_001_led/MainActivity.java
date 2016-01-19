@@ -21,8 +21,6 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public void onClick(View v) {
 
-            HardControl hardControl = new HardControl();
-
             ledOn = !ledOn;
             if (ledOn) {
                 bn1.setText("ALL ON");
@@ -52,12 +50,11 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         final TextView tx1 = (TextView) findViewById(R.id.text1);
         tx1.setText("LED text ! ");
 
         //打开led
-        //HardControl.ledOpen();
+        HardControl.ledOpen();
 
         bn1 = (Button) findViewById(R.id.bn1);
 
@@ -67,7 +64,7 @@ public class MainActivity extends ActionBarActivity {
         checkBox4 = (CheckBox) findViewById(R.id.checkbox4);
 
         bn1.setOnClickListener(new MyButtonListener());
-
+        //HardControl.ledClose();
     }
 
     public void onCheckboxClicked(View view){
@@ -79,21 +76,21 @@ public class MainActivity extends ActionBarActivity {
             case R.id.checkbox1:
                 if (checked){
                     Toast.makeText(getApplicationContext(),"LED1 ON",Toast.LENGTH_SHORT).show();
-                    //HardControl.ledCtrl(0,1);
+                    HardControl.ledCtrl(0,1);
                 } else {
                     Toast.makeText(getApplicationContext(),"LED1 OFF",Toast.LENGTH_SHORT).show();
-                    //HardControl.ledCtrl(0, 0);
+                    HardControl.ledCtrl(0, 0);
                 }
                 break;
 
             case R.id.checkbox2:
                 if (checked){
                     Toast.makeText(getApplicationContext(),"LED2 ON",Toast.LENGTH_SHORT).show();
-                    //HardControl.ledCtrl(1,1);
+                    HardControl.ledCtrl(1,1);
 
                 } else {
                     Toast.makeText(getApplicationContext(),"LED2 OFF",Toast.LENGTH_SHORT).show();
-                    //HardControl.ledCtrl(1,0);
+                    HardControl.ledCtrl(1,0);
                 }
                 break;
 
@@ -112,6 +109,10 @@ public class MainActivity extends ActionBarActivity {
                     Toast.makeText(getApplicationContext(),"LED4 OFF",Toast.LENGTH_SHORT).show();
                 }
                 break;
+
+
         }
+
+        //HardControl.ledClose();
     }
 }
