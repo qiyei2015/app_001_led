@@ -1,5 +1,7 @@
 package ieee.app_001_led;
 
+import android.os.RemoteException;
+import android.os.ServiceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -7,7 +9,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
-import ieee.hardlibrary.*;
+import android.os.ILedService;
+
 
 public class MainActivity extends ActionBarActivity {
     private  boolean ledOn = false;
@@ -16,6 +19,9 @@ public class MainActivity extends ActionBarActivity {
     private CheckBox checkBox2 = null;
     private CheckBox checkBox3 = null;
     private CheckBox checkBox4 = null;
+    private ILedService iLedService = null;
+
+
 
     class MyButtonListener implements View.OnClickListener {
         @Override
@@ -29,8 +35,12 @@ public class MainActivity extends ActionBarActivity {
                 checkBox3.setChecked(true);
                 checkBox4.setChecked(true);
 
-                HardControl.ledCtrl(0,1);
-                HardControl.ledCtrl(1,1);
+                try {
+                    iLedService.ledCtrl(0,1);
+                    iLedService.ledCtrl(1,1);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
 
             } else {
                 bn1.setText("ALL OFF");
@@ -39,8 +49,12 @@ public class MainActivity extends ActionBarActivity {
                 checkBox3.setChecked(false);
                 checkBox4.setChecked(false);
 
-                HardControl.ledCtrl(0, 0);
-                HardControl.ledCtrl(1,0);
+                try {
+                    iLedService.ledCtrl(0, 0);
+                    iLedService.ledCtrl(1,0);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -53,8 +67,9 @@ public class MainActivity extends ActionBarActivity {
         final TextView tx1 = (TextView) findViewById(R.id.text1);
         tx1.setText("LED text ! ");
 
-        //打开led
-        HardControl.ledOpen();
+        //注意，这里要和 ServiceManager.addService("led", new LedService())一样
+        iLedService = ILedService.Stub.asInterface(ServiceManager.getService("led"));
+
 
         bn1 = (Button) findViewById(R.id.bn1);
 
@@ -64,7 +79,7 @@ public class MainActivity extends ActionBarActivity {
         checkBox4 = (CheckBox) findViewById(R.id.checkbox4);
 
         bn1.setOnClickListener(new MyButtonListener());
-        //HardControl.ledClose();
+
     }
 
     public void onCheckboxClicked(View view){
@@ -76,21 +91,37 @@ public class MainActivity extends ActionBarActivity {
             case R.id.checkbox1:
                 if (checked){
                     Toast.makeText(getApplicationContext(),"LED1 ON",Toast.LENGTH_SHORT).show();
-                    HardControl.ledCtrl(0,1);
+                    try {
+                        iLedService.ledCtrl(0,1);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     Toast.makeText(getApplicationContext(),"LED1 OFF",Toast.LENGTH_SHORT).show();
-                    HardControl.ledCtrl(0, 0);
+                    try {
+                        iLedService.ledCtrl(0, 0);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
 
             case R.id.checkbox2:
                 if (checked){
                     Toast.makeText(getApplicationContext(),"LED2 ON",Toast.LENGTH_SHORT).show();
-                    HardControl.ledCtrl(1,1);
+                    try {
+                        iLedService.ledCtrl(1,1);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
 
                 } else {
                     Toast.makeText(getApplicationContext(),"LED2 OFF",Toast.LENGTH_SHORT).show();
-                    HardControl.ledCtrl(1,0);
+                    try {
+                        iLedService.ledCtrl(1,0);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
 
@@ -113,6 +144,6 @@ public class MainActivity extends ActionBarActivity {
 
         }
 
-        //HardControl.ledClose();
+        //iLedService.ledClose();
     }
 }

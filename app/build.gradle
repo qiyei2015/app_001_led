@@ -11,12 +11,19 @@ android {
         versionCode 1
         versionName "1.0"
 
+        multiDexEnabled true
+
         ndk{
             moduleName "HardControl"  //设置库(so)文件名称
             ldLibs "log"                //链接所需的库
             abiFilters "armeabi","armeabi-v7a","x86"
         }
 
+    }
+
+    dexOptions {
+        incremental true
+        javaMaxHeapSize "4g"
     }
 
     /*
@@ -39,4 +46,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:21.0.3'
+    compile project(':classes')
+    compile 'com.android.support:multidex:1.0.0'
+
 }
